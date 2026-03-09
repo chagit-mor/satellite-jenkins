@@ -119,7 +119,7 @@ pipeline {
     stage('Secure Deployment Preparation') {
 
       when {
-        branch 'main'
+        expression { env.BRANCH_NAME == 'main' }
       }
 
       steps {
