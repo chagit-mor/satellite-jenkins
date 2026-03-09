@@ -57,10 +57,6 @@ pipeline {
 
             retry(2) {
               echo "Analyzing orbital signals (retry demo)..."
-//               bat '''
-//               type %DATA_DIR%\\orbit.txt
-//               exit /b 0
-//               '''
               bat '''
               if not exist fail.marker (
               echo First attempt failed > fail.marker
@@ -152,11 +148,6 @@ pipeline {
     }
 
     stage('Deploy Satellite Processing System') {
-//
-//       when {
-//         expression { env.GIT_BRANCH == 'origin/main' }
-//       }
-
       steps {
         echo "Deploying processed signal system..."
         bat '''
