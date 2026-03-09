@@ -62,9 +62,8 @@ pipeline {
               bat '''
               echo Reading orbital signal...
               type satellite_data\\orbit.txt
-              timeout /t 4
               '''
-
+              sleep time: 4, unit: 'SECONDS'
             }
 
           }
@@ -76,9 +75,8 @@ pipeline {
             bat '''
             echo Reading sensor signal...
             type satellite_data\\sensor.txt
-            timeout /t 4
             '''
-
+            sleep time: 4, unit: 'SECONDS'
           }
         }
 
@@ -88,9 +86,8 @@ pipeline {
             bat '''
             echo Validating combined data...
             type build\\combined_signal.txt
-            timeout /t 4
             '''
-
+            sleep time: 4, unit: 'SECONDS'
           }
         }
 
