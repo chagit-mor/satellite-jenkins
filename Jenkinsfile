@@ -148,7 +148,7 @@ pipeline {
     stage('Deploy Satellite Processing System') {
 
       when {
-        env.BRANCH_NAME == 'main'
+        expression { env.BRANCH_NAME == 'main' }
       }
 
       steps {
