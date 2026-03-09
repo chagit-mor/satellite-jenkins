@@ -23,29 +23,27 @@ pipeline {
 
     stage('Build Satellite Processing Engine') {
       steps {
-
         echo "Preparing satellite processing directories..."
-
         bat '''
         if not exist build mkdir build
         if not exist %DATA_DIR% mkdir %DATA_DIR%
+        dir
         '''
 
         echo "Generating satellite transmissions..."
-
         bat '''
         echo ORBIT_SIGNAL > %DATA_DIR%\\orbit.txt
         echo SENSOR_SIGNAL > %DATA_DIR%\\sensor.txt
+        dir %DATA_DIR%
         '''
 
         echo "Combining satellite signals..."
-
         bat '''
         type %DATA_DIR%\\orbit.txt %DATA_DIR%\\sensor.txt > build\\combined_signal.txt
+        dir build
         '''
 
         echo "Storing build artifacts for future stages..."
-
         stash includes: 'build/**', name: 'satellite-build'
       }
     }
@@ -58,10 +56,10 @@ pipeline {
           steps {
 
             retry(2) {
-
+              echo "Analyzing orbital signals (retry demo)..."
               bat '''
-              echo Reading orbital signal...
-              type satellite_data\\orbit.txt
+              type %DATA_DIR%\\orbit.txt
+              exit /b 0
               '''
               sleep time: 4, unit: 'SECONDS'
             }
@@ -71,10 +69,9 @@ pipeline {
 
         stage('Analyze Sensor Signals') {
           steps {
-
+            echo "Analyzing sensor signals..."
             bat '''
-            echo Reading sensor signal...
-            type satellite_data\\sensor.txt
+            type %DATA_DIR%\\sensor.txt
             '''
             sleep time: 4, unit: 'SECONDS'
           }
@@ -82,9 +79,8 @@ pipeline {
 
         stage('Validate Combined Data') {
           steps {
-
+            echo "Validating combined data..."
             bat '''
-            echo Validating combined data...
             type build\\combined_signal.txt
             '''
             sleep time: 4, unit: 'SECONDS'
@@ -104,6 +100,8 @@ pipeline {
         echo ^<testcase classname="orbit" name="orbitTest"/^> >> results\\report.xml
         echo ^<testcase classname="sensor" name="sensorTest"/^> >> results\\report.xml
         echo ^</testsuite^> >> results\\report.xml
+        dir results
+        type results\\report.xml
         '''
 
         junit 'results/report.xml'
@@ -127,17 +125,16 @@ pipeline {
           )
         ]) {
 
+          echo "Secure access granted for deployment"
           bat '''
-          echo Secure access granted for deployment
           echo Connected as %USER%
           '''
 
         }
 
         echo "Retrieving stored satellite build..."
-
         unstash 'satellite-build'
-
+        bat 'dir build'
       }
     }
 
@@ -148,14 +145,13 @@ pipeline {
       }
 
       steps {
-
+        echo "Deploying processed signal system..."
         bat '''
-        echo Deploying processed signal system
         type build\\combined_signal.txt
+        dir build
         '''
 
         archiveArtifacts artifacts: 'build/**'
-
       }
 
     }
