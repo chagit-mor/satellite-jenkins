@@ -152,10 +152,10 @@ pipeline {
     }
 
     stage('Deploy Satellite Processing System') {
-
-      when {
-        expression { env.GIT_BRANCH == 'main' }
-      }
+//
+//       when {
+//         expression { env.GIT_BRANCH == 'origin/main' }
+//       }
 
       steps {
         echo "Deploying processed signal system..."
