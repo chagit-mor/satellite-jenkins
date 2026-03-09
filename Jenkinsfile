@@ -97,6 +97,12 @@ pipeline {
       }
 
     }
+    stage('Print Branch Name') {
+        steps {
+            echo "The current branch is: ${env.BRANCH_NAME}"
+            echo "The current branch is: ${env.GIT_BRANCH}"
+        }
+    }
 
     stage('Generate Test Report') {
       steps {
